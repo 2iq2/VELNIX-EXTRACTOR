@@ -13,6 +13,7 @@ const MAX_REQUESTS = 30;
 const buckets = new Map();
 
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'no-referrer');
@@ -27,7 +28,7 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '16kb', strict: true }));
 
 function rateLimit(req, res, next) {
-  const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
+  const ip = String(req.ip || req.socket.remoteAddress || 'unknown');
   const now = Date.now();
   let item = buckets.get(ip);
   if (!item || now - item.start >= WINDOW_MS) item = { start: now, count: 0 };
@@ -148,7 +149,8 @@ app.post('/api/playlist', async (req, res) => {
     const body = upstream.body.toString('utf8');
     if (!body.trimStart().startsWith('#EXTM3U')) return res.status(502).json({ error: 'ردّ المزوّد لا يبدو كقائمة M3U صالحة.' });
     res.setHeader('Cache-Control', 'no-store');
-    res.type('application/vnd.apple.mpegurl; charset=utf-8').send(body);
+    res.setHeader('Content-Type', 'application/vnd.apple.mpegurl; charset=utf-8');
+    res.send(body);
   } catch (e) {
     res.status(400).json({ error: e.message || 'تعذر تنزيل القائمة.' });
   }
