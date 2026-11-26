@@ -1,23 +1,45 @@
 # VELNIX EXTRACTOR PRO
 
-A small Node/Express application for authorized Xtream API access.
+واجهة عربية لاستخراج قوائم Live من حساب Xtream يملك المستخدم حق استخدامه.
 
-## Deploy on Render
-- Runtime: Node
-- Build command: `npm install`
-- Start command: `npm start`
-- Node.js: 20 or newer
-- Health endpoint: `/health`
+## النشر الحالي
 
-## Features
-- Account/API connection check
-- Live categories and channel extraction
-- M3U/M3U8, TXT, CSV, and JSON exports
-- Local M3U/M3U8 file import and filtering
+- الواجهة الأمامية: GitHub Pages من مجلد `public/`.
+- خدمة API: Supabase Edge Function باسم `xtream-extractor`.
+- مشروع Supabase: `selovvyxvvdcdvdvlqzo` (منطقة Frankfurt / eu-central-1).
+- عنوان الوظيفة: `https://selovvyxvvdcdvdvlqzo.supabase.co/functions/v1/xtream-extractor`.
 
-## Security
-- Credentials are sent to this app and forwarded to the provider entered by the user; they are not persisted or logged by the application.
-- Only account info, live categories, live streams, and M3U playlist endpoints are accepted.
-- Private/reserved IPv4 targets are blocked, DNS is validated and pinned for upstream requests, redirects are refused, and response sizes/timeouts are limited.
-- API requests are rate-limited. Use only subscriptions and endpoints you are authorized to access.
-- Exported stream URLs can contain subscription credentials. Keep them private.
+## إعداد GitHub Pages
+
+تمت إضافة Workflow في `.github/workflows/deploy-pages.yml` لنشر مجلد `public` تلقائياً عند كل تحديث إلى فرع `main`.
+
+إذا لم يكن GitHub Pages مفعّلاً بعد:
+1. افتح إعدادات المستودع Settings.
+2. افتح Pages.
+3. من Build and deployment اختر GitHub Actions.
+4. انتظر انتهاء Workflow باسم Deploy VELNIX EXTRACTOR to GitHub Pages.
+
+رابط الموقع المتوقع: https://2iq2.github.io/VELNIX-EXTRACTOR/
+
+## الوظيفة
+
+- فحص اتصال Xtream API.
+- قراءة تصنيفات وقنوات Live.
+- تصفية وبحث محلي.
+- تصدير M3U وM3U8 وTXT وCSV وJSON.
+- استيراد ملفات M3U/M3U8 محلياً.
+- تنزيل قائمة M3U من مزوّد الخدمة.
+
+## الخصوصية والأمان
+
+- لا تُحفظ بيانات الاشتراك في قاعدة بيانات التطبيق.
+- لا تضع بيانات الدخول داخل رابط السيرفر؛ أدخلها في الحقول المخصصة.
+- الوظيفة تقبل فقط طلبات من أصل GitHub Pages المحدد، وتطبّق تحديداً مؤقتاً للطلبات، وتمنع عناوين IP المباشرة والنطاقات الداخلية والتحويلات، وتضع حدوداً للوقت وحجم الرد.
+- فحوص DNS حماية أولية وليست ضماناً كاملاً ضد DNS rebinding؛ لا تستخدم الخدمة مع عناوين مزوّد غير موثوقة.
+- روابط البث وملفات التصدير قد تحتوي بيانات اشتراكك. احتفظ بها بشكل خاص.
+- استخدم فقط اشتراكات وخوادم لديك تصريح باستخدامها. لا تتجاوز DRM أو قيود المزوّد.
+
+## ملاحظات تقنية
+
+- Supabase Edge Function تعمل على Deno، وليست خادم Express دائم.
+- لا يحتاج المتصفح إلى مفتاح Supabase السري؛ المفتاح المستخدم في الواجهة هو publishable key فقط.
